@@ -54,7 +54,7 @@ public:
         return *this;
     }
 
-    // Using auto in place of Cell::Type as inner type can't be 
+    // Using auto in place of Cell::Type as inner type can't be
     // forward declared and it caused inclomplete type errors
 
           auto& operator*()       { return _cellPtr->_value; }

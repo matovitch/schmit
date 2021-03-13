@@ -1,7 +1,5 @@
 #pragma once
 
-#include "schmit/message.hpp"
-
 #include "pool/intrusive.hpp"
 
 #include <functional>
@@ -11,36 +9,30 @@
 namespace schmit
 {
 
-template <class Type, std::size_t SIZE>
+template <std::size_t SIZE>
 class TWork
 {
 
 public:
 
-    using Pool = pool::intrusive::TMake<TWork<Type, SIZE>, SIZE>;
-    using Message = TMessage<Type, SIZE>;
+    using Pool = pool::intrusive::TMake<TWork<SIZE>, SIZE>;
 
     template <class Function>
-    TWork(Pool& pool, Function&& function, Message& message) :
+    TWork(Pool& pool, Function&& function) :
         _pool{pool},
-        _function{std::move(function)},
-        _message{message}
+        _function{std::move(function)}
     {}
 
     void run()
     {
-        _message.write(_function());
+        _function();
         _pool.recycle(*this);
     }
 
 private:
 
     Pool&                 _pool;
-    std::function<Type()> _function;
-
-public:
-
-    Message& _message;
+    std::function<void()> _function;
 };
 
 } // namespace schmit

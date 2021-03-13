@@ -24,22 +24,16 @@ public:
     template <std::size_t STACK_SIZE>
     using TCoroutinePool = typename schmit_details::TCoroutine<STACK_SIZE, SIZE>::Pool;
 
-    template <class Type>
-    using TTaskPool = typename TTask<Type, SIZE>::Pool;
-
-    template <class Type>
-    using TWorkPool = typename TWork<Type, SIZE>::Pool;
-
-    template <class Type>
-    using TMessagePool = typename TMessage<Type, SIZE>::Pool;
+    using PoolTask = typename TTask<SIZE>::Pool;
+    using PoolWork = typename TWork<SIZE>::Pool;
 
     TScheduler(TaskGraphPoolSet& taskGraphPoolSet) :
         _coroutine {_coroutinePool.make(nullptr)},
         _taskGraph {taskGraphPoolSet}
     {}
 
-    template <class Type, std::size_t STACK_SIZE>
-    TaskNode makeTask(TTaskPool<Type>& taskPool, TCoroutinePool<STACK_SIZE>& coroutinePool)
+    template <std::size_t STACK_SIZE>
+    TaskNode makeTask(PoolTask& taskPool, TCoroutinePool<STACK_SIZE>& coroutinePool)
     {
         auto& task = taskPool.make(*this, coroutinePool);
         TaskNode taskNode{_taskGraph.makeNode(&task)};

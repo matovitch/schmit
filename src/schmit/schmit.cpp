@@ -10,9 +10,8 @@ int main()
 {
     using Scheduler                 = schmit::TScheduler<1>;
     using SchedulerTaskGraphPoolSet = typename Scheduler::TaskGraphPoolSet;
-    using PoolTaskChar              = typename Scheduler::TTaskPool    <char>;
-    using PoolWorkChar              = typename Scheduler::TWorkPool    <char>;
-    using PoolMessageChar           = typename Scheduler::TMessagePool <char>;
+    using PoolTask                  = typename Scheduler::PoolTask;
+    using PoolWork                  = typename Scheduler::PoolWork;
     using PoolCoroutine             = typename Scheduler::TCoroutinePool<0x2000 /*stack size*/>;
     using Dependency                = typename Scheduler::Dependency;
 
@@ -21,32 +20,24 @@ int main()
     Scheduler scheduler{schedulerTaskGraphPoolSet};
 
     // Create the tasks
-    PoolTaskChar  poolTaskChar;
+    PoolTask      poolTask;
     PoolCoroutine poolCoroutine;
 
-    auto taskA = scheduler.makeTask<char, 0x2000>(poolTaskChar, poolCoroutine);
-    auto taskB = scheduler.makeTask<char, 0x2000>(poolTaskChar, poolCoroutine);
-    auto taskC = scheduler.makeTask<char, 0x2000>(poolTaskChar, poolCoroutine);
-
-    PoolMessageChar poolMessageChar;
-
-    auto& mesgA = poolMessageChar.make();
-    auto& mesgB = poolMessageChar.make();
-    auto& mesgC = poolMessageChar.make();
+    auto taskA = scheduler.makeTask<0x2000>(poolTask, poolCoroutine);
+    auto taskB = scheduler.makeTask<0x2000>(poolTask, poolCoroutine);
+    auto taskC = scheduler.makeTask<0x2000>(poolTask, poolCoroutine);
 
     // Create the works
-    PoolWorkChar poolWorkChar;
+    PoolWork poolWork;
 
-    auto& workA = poolWorkChar.make([](){ std::cout << "A\n"; return 'A'; }, mesgA);
-    auto& workB = poolWorkChar.make([](){ std::cout << "B\n"; return 'B'; }, mesgB);
-    auto& workC = poolWorkChar.make([](){ std::cout << "C\n"; return 'C'; }, mesgC);
+    auto& workA = poolWork.make([](){ std::cout << "A\n"; });
+    auto& workB = poolWork.make([](){ std::cout << "B\n"; });
+    auto& workC = poolWork.make([](){ std::cout << "C\n"; });
 
     // Assign works to tasks
-    taskA().as<char>().assignWork(workA);
-    taskB().as<char>().assignWork(workB);
-    taskC().as<char>().assignWork(workC);
-
-    //workA._message.send();
+    taskA().assignWork(workA);
+    taskB().assignWork(workB);
+    taskC().assignWork(workC);
 
     // Declare dependencies
     Dependency dependency;
@@ -55,10 +46,6 @@ int main()
     taskC().attach(taskA, dependency);
 
     scheduler.run();
-
-    std::cout << mesgA.retrieve() << '\n';
-    std::cout << mesgB.retrieve() << '\n';
-    std::cout << mesgC.retrieve() << '\n';
 
     return 0;
 }
