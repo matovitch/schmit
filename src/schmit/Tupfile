@@ -1,0 +1,4 @@
+include_rules
+
+: foreach $(BIN_SCHMIT_CPP) |> !cx |> %B.o <obj>
+: foreach $(BIN_SCHMIT_OBJ) | <obj> $(ROOT)/<lib_schmit> |> !cl |> %B.bin $(ROOT)/<bin_schmit>

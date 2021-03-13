@@ -1,0 +1,10 @@
+BIN_SCHMIT_CPP = $(ROOT)/src/schmit/*.cpp
+BIN_SCHMIT_OBJ = $(ROOT)/src/schmit/*.o
+
+# Note: There is a bug with tup and the binary cannot be named 'schmit'
+#       Not exactly sure as to why... :/
+# BIN_SCHMIT_OUT = schmit.bin
+
+# Note: The linker need the libs in topological order
+CLFLAGS += -l schmit
+CLFLAGS += -L $(ROOT)/lib/src/schmit
