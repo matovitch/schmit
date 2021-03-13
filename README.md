@@ -1,4 +1,4 @@
-# Schoco
+# Schmit
 
 // TODO
 
