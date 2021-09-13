@@ -23,9 +23,9 @@ int main()
     PoolTask      poolTask;
     PoolCoroutine poolCoroutine;
 
-    auto taskA = scheduler.makeTask<0x2000>(poolTask, poolCoroutine);
-    auto taskB = scheduler.makeTask<0x2000>(poolTask, poolCoroutine);
-    auto taskC = scheduler.makeTask<0x2000>(poolTask, poolCoroutine);
+    auto taskA = scheduler.makeTask(poolTask, poolCoroutine);
+    auto taskB = scheduler.makeTask(poolTask, poolCoroutine);
+    auto taskC = scheduler.makeTask(poolTask, poolCoroutine);
 
     // Create the works
     PoolWork poolWork;
